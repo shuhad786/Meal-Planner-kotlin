@@ -4,12 +4,13 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.biteplan.ui.theme.BitePlanTheme
 
@@ -19,29 +20,77 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             BitePlanTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                MealPlannerScreen()
             }
         }
     }
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
+fun MealPlannerScreen() {
+    var userInput by remember { mutableStateOf(TextFieldValue("")) }
+    var outputText by remember { mutableStateOf("") }
+
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        content = { innerPadding ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(text = "Meal Planner", style = MaterialTheme.typography.headlineMedium)
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                TextField(
+                    value = userInput,
+                    onValueChange = { userInput = it },
+                    label = { Text("Enter your meal") }
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Row {
+                    Button(onClick = {
+                        outputText = when (userInput.text.lowercase()) {
+                            "breakfast" -> "You planned: Pancakes"
+                            "brunch" -> "You planned: Avocado Toast"
+                            "lunch" -> "You planned: Caesar Salad"
+                            "afternoon" -> "You planned: Smoothie"
+                            "dinner" -> "You planned: Grilled Salmon"
+                            "nightcap" -> "You planned: Whiskey Sour"
+                            else -> "Please enter a valid meal type."
+                        }
+                    }) {
+                        Text("Submit")
+                    }
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    Button(onClick = {
+                        userInput = TextFieldValue("")
+                        outputText = ""
+                    }) {
+                        Text("Reset")
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text(text = outputText, style = MaterialTheme.typography.bodyLarge)
+            }
+        }
     )
 }
 
 @Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
+fun MealPlannerPreview() {
     BitePlanTheme {
-        Greeting("Android")
+        MealPlannerScreen()
     }
 }
