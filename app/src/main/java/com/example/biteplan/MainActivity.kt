@@ -30,6 +30,7 @@ class MainActivity : ComponentActivity() {
 fun MealPlannerScreen() {
     var userInput by remember { mutableStateOf(TextFieldValue("")) }
     var outputText by remember { mutableStateOf("") }
+    var errorMessage by remember { mutableStateOf("") }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -48,9 +49,21 @@ fun MealPlannerScreen() {
 
                 TextField(
                     value = userInput,
-                    onValueChange = { userInput = it },
-                    label = { Text("Enter your meal") }
+                    onValueChange = {
+                        userInput = it
+                        errorMessage = "" // Clear error message on input change
+                    },
+                    label = { Text("Enter your meal (breakfast, brunch, lunch, afternoon, dinner, nightcap)") },
+                    isError = errorMessage.isNotEmpty()
                 )
+
+                if (errorMessage.isNotEmpty()) {
+                    Text(
+                        text = errorMessage,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -63,7 +76,10 @@ fun MealPlannerScreen() {
                             "afternoon" -> "You planned: Smoothie"
                             "dinner" -> "You planned: Grilled Salmon"
                             "nightcap" -> "You planned: Whiskey Sour"
-                            else -> "Please enter a valid meal type."
+                            else -> {
+                                errorMessage = "Invalid input! Please enter a valid meal type."
+                                ""
+                            }
                         }
                     }) {
                         Text("Submit")
@@ -75,6 +91,7 @@ fun MealPlannerScreen() {
                         // Reset both user input and output text
                         userInput = TextFieldValue("")
                         outputText = ""
+                        errorMessage = "" // Clear error message on reset
                     }) {
                         Text("Reset")
                     }
