@@ -72,6 +72,7 @@ fun MealPlannerScreen() {
                     Spacer(modifier = Modifier.width(8.dp))
 
                     Button(onClick = {
+                        // Reset both user input and output text
                         userInput = TextFieldValue("")
                         outputText = ""
                     }) {
